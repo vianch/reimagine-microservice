@@ -4,7 +4,7 @@ const app           = express();
 const bodyParser    = require("body-parser");
 const path          = require("path");
 const fs         = require("fs");
-
+const folderName = "uploads";
 
 app.listen(3000, () => {
     console.log("Reimagine started!");
@@ -71,7 +71,7 @@ app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" })
     }
 
     imageLength = request.body.length;
-    fd  = fs.createWriteStream(path.join(__dirname, "uploads", image), {
+    fd  = fs.createWriteStream(path.join(__dirname, folderName, image), {
         flags    : "w+",
         encoding : "binary"
     });
@@ -87,7 +87,7 @@ app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" })
 // URL: curl --head 'http://localhost:3000/uploads/otro.png'
 app.head("/uploads/:image", (request, response) => {
     fs.access(
-        path.join(__dirname, "uploads", request.params.image),
+        path.join(__dirname, folderName, request.params.image),
         fs.constants.R_OK,
         (error) => {
             response.status(error ? 404 : 200);
@@ -95,3 +95,33 @@ app.head("/uploads/:image", (request, response) => {
         },
     );
 });
+
+app.get("/uploads/:image", (request, response) => {
+    let extension = path.extname(request.params.image);
+    let fd;
+
+    if (!extension.match(/^\.(png|jpg)$/)) {
+        return response.status(403).end();
+    }
+
+    fd = fs.createReadStream(
+        path.join(__dirname, folderName, request.params.image)
+    );
+
+    fd.on("error", (error) => {
+        if (error.code === "ENOENT") { 
+            response.status(404);
+            
+            if (request.accepts("html")) {
+                response.setHeader("Content-Type", "text/html");
+                response.write("<strong>Error: </strong> No image exist!")
+            }
+        }
+
+        response.status(500).end();
+    });
+
+    response.setHeader("Content-Type", `image/${extension.substr(1)}`);
+    fd.pipe(response);
+});
+
