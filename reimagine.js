@@ -84,3 +84,13 @@ app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" })
     });
 });
 
+app.head("/uploads/:image", (request, response) => {
+    fs.access(
+        path.join(__dirname, "uploads", request.params.image),
+        fs.constants.R_OK,
+        (error) => {
+            response.status(error ? 404 : 200);
+            response.end();
+        },
+    );
+});
