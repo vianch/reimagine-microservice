@@ -1,0 +1,15 @@
+{
+  "name": "reimagine",
+  "version": "1.0.0",
+  "description": "procesamiento de imagenes",
+  "main": "index.js",
+  "author": "VIANCH",
+  "license": "MIT",
+  "devDependencies": {
+    "express": "^4.16.4"
+  },
+  "dependencies": {
+    "body-parser": "^1.18.3",
+    "sharp": "^0.21.0"
+  }
+}
