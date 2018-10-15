@@ -62,66 +62,48 @@ app.get(/\/thumbnail\.(jpg|png)/, (request, response, next) => {
 
 // URL:  curl -X POST -H 'Content-Type: image/png' --data-binary @/Users/victorchavarro/Desktop/hydra.png http://localhost:3000/uploads/hydra.png
 app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" }), (request, response) => {
-    let image = request.params.image.toLowerCase();
-    let imageLength;
-    let fd;
-
-    if (!image.match(/\.(png|jpg)$/)) {
-        return response.status(403).end();
-    }
-
-    imageLength = request.body.length;
-    fd  = fs.createWriteStream(path.join(__dirname, folderName, image), {
+    let fd  = fs.createWriteStream(request.localpath, {
         flags    : "w+",
         encoding : "binary"
     });
 
-    fd.write(request.body);
-    fd.end();
+    fd.end(request.body);
 
     fd.on("close", () => {
-        response.send({ status : "ok", size: imageLength });
+        response.send({ status : "ok", size: request.body.length });
     });
 });
 
 // URL: curl --head 'http://localhost:3000/uploads/otro.png'
 app.head("/uploads/:image", (request, response) => {
     fs.access(
-        path.join(__dirname, folderName, request.params.image),
+        request.localpath,
         fs.constants.R_OK,
         (error) => {
-            response.status(error ? 404 : 200);
-            response.end();
+            response.status(error ? 404 : 200).end();
         },
     );
 });
 
 app.get("/uploads/:image", (request, response) => {
-    let extension = path.extname(request.params.image);
-    let fd;
-
-    if (!extension.match(/^\.(png|jpg)$/)) {
-        return response.status(403).end();
-    }
-
-    fd = fs.createReadStream(
-        path.join(__dirname, folderName, request.params.image)
-    );
+    let fd = fs.createReadStream(request.localpath);
 
     fd.on("error", (error) => {
-        if (error.code === "ENOENT") { 
-            response.status(404);
-            
-            if (request.accepts("html")) {
-                response.setHeader("Content-Type", "text/html");
-                response.write("<strong>Error: </strong> No image exist!")
-            }
-        }
-
-        response.status(500).end();
+        response.status(error.code === "ENOENT" ? 404 : 500).end();
     });
 
-    response.setHeader("Content-Type", `image/${extension.substr(1)}`);
+    response.setHeader("Content-Type", `image/${path.extname(request.image).substr(1)}`);
+
     fd.pipe(response);
 });
 
+app.param("image", (request, response, next, image) => {
+    if (!image.match(/\.(png|jpg)$/i)) {
+        return response.status(request.method === "POST" ? 403 : 404).end();
+    }
+
+    request.image = image;
+    request.localpath = path.join(__dirname, folderName, request.image);
+
+    return next();
+});
