@@ -5,12 +5,24 @@ const bodyParser    = require("body-parser");
 const path          = require("path");
 const fs            = require("fs");
 const folderName    = "uploads";
+const port          = 3000;
 
-app.listen(3000, () => {
-    console.log("Reimagine started!");
+app.listen(port, () => {
+    console.log(`Reimagine started port ${port}!`);
 });
 
 app.get(/\/thumbnail\.(jpg|png)/, ImageService.renderDefaultImage);
+
+app.param("image", (request, response, next, image) => {
+    if (!image.match(/\.(png|jpg)$/i)) {
+        return response.status(request.method === "POST" ? 403 : 404).end();
+    }
+
+    request.image = image;
+    request.localpath = path.join(__dirname, folderName, request.image);
+
+    return next();
+});
 
 // URL:  curl -X POST -H 'Content-Type: image/png' --data-binary @/Users/victorchavarro/Desktop/hydra.png http://localhost:3000/uploads/hydra.png
 app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" }), (request, response) => {
@@ -37,44 +49,4 @@ app.head("/uploads/:image", (request, response) => {
     );
 });
 
-app.get("/uploads/:width(\\d+)x:height(\\d+)-:greyscale-:image", ImageService.downloadImage);
-app.get("/uploads/:width(\\d+)x:height(\\d+)-:image", ImageService.downloadImage);
-app.get("/uploads/_x:height(\\d+)-:greyscale-:image", ImageService.downloadImage);
-app.get("/uploads/_x:height(\\d+)-:image", ImageService.downloadImage);
-app.get("/uploads/:width(\\d+)x_-:greyscale-:image", ImageService.downloadImage);
-app.get("/uploads/:width(\\d+)x_-:image", ImageService.downloadImage);
-app.get("/uploads/:greyscale-:image", ImageService.downloadImage);
 app.get("/uploads/:image", ImageService.downloadImage);
-
-app.param("image", (request, response, next, image) => {
-    if (!image.match(/\.(png|jpg)$/i)) {
-        return response.status(request.method === "POST" ? 403 : 404).end();
-    }
-
-    request.image = image;
-    request.localpath = path.join(__dirname, folderName, request.image);
-
-    return next();
-});
-
-app.param("width", (request, response, next, width) => {
-    request.width = +width;
-
-    return next();
-});
-
-app.param("height", (request, response, next, height) => {
-    request.height = +height;
-
-    return next();
-});
-
-app.param("greyscale", (request, response, next, greyscale) => {
-    if (greyscale !== "gs") {
-        return next("route");
-    }
-
-    request.greyscale = true;
- 
-	return next();
-});

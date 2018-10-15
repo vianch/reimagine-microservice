@@ -59,16 +59,15 @@ module.exports = class ImageService {
             if (error) { response.status(404).end(); }
 
             let image = sharp(request.localpath);
+            let width = +request.query.width;
+            let height = +request.query.height;
+            let greyScale = ["1", "on", "yes"].includes(request.query.greyscale)
 
-            if (request.width && request.height) {
-                image.ignoreAspectRatio();
+            if (width || height) {
+                image.resize(width || null, height || null, { fit: "fill" });
             }
 
-            if (request.width || request.height) {
-                image.resize(request.width, request.height);
-            }
-
-            if (request.greyscale) {
+            if (greyScale) {
                 image.greyscale();
             }
 
