@@ -107,3 +107,15 @@ app.param("image", (request, response, next, image) => {
 
     return next();
 });
+
+app.param("width", (request, response, next, width) => {
+    request.width = +width;
+
+    return next();
+});
+
+app.param("height", (request, response, next, height) => {
+    request.height = +height;
+
+    return next();
+});
