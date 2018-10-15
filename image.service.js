@@ -68,6 +68,10 @@ module.exports = class ImageService {
                 image.resize(request.width, request.height);
             }
 
+            if (request.greyscale) {
+                image.greyscale();
+            }
+
             response.setHeader(
                 "Content-Type",
                 `image/${ path.extname(request.image).substr(1) }`

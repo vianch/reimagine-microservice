@@ -37,9 +37,13 @@ app.head("/uploads/:image", (request, response) => {
     );
 });
 
+app.get("/uploads/:width(\\d+)x:height(\\d+)-:greyscale-:image", ImageService.downloadImage);
 app.get("/uploads/:width(\\d+)x:height(\\d+)-:image", ImageService.downloadImage);
+app.get("/uploads/_x:height(\\d+)-:greyscale-:image", ImageService.downloadImage);
 app.get("/uploads/_x:height(\\d+)-:image", ImageService.downloadImage);
+app.get("/uploads/:width(\\d+)x_-:greyscale-:image", ImageService.downloadImage);
 app.get("/uploads/:width(\\d+)x_-:image", ImageService.downloadImage);
+app.get("/uploads/:greyscale-:image", ImageService.downloadImage);
 app.get("/uploads/:image", ImageService.downloadImage);
 
 app.param("image", (request, response, next, image) => {
@@ -63,4 +67,14 @@ app.param("height", (request, response, next, height) => {
     request.height = +height;
 
     return next();
+});
+
+app.param("greyscale", (request, response, next, greyscale) => {
+    if (greyscale !== "gs") {
+        return next("route");
+    }
+
+    request.greyscale = true;
+ 
+	return next();
 });
