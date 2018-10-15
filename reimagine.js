@@ -84,6 +84,7 @@ app.post("/uploads/:image", bodyParser.raw({ limit : "3mb", type  : "image/*" })
     });
 });
 
+// URL: curl --head 'http://localhost:3000/uploads/otro.png'
 app.head("/uploads/:image", (request, response) => {
     fs.access(
         path.join(__dirname, "uploads", request.params.image),
