@@ -3,10 +3,26 @@
   "version": "1.0.0",
   "description": "procesamiento de imagenes",
   "main": "index.js",
-  "author": "VIANCH",
+  "author": "VIANCH <info@vianch.com>",
   "license": "MIT",
+  "scripts": {
+    "start": "node hydra-service.js",
+    "debug": "node-debug hydra-service.js --debug-brk",
+    "test": "mocha specs --reporter spec",
+    "docker": "node scripts/docker.js"
+  },
+  "engines": {
+    "node": ">=6.2.1"
+  },
   "devDependencies": {
-    "express": "^4.16.4"
+    "express": "^4.16.4",
+    "chai": "3.5.0",
+    "eslint": "3.16.0",
+    "mocha": "3.2.0",
+    "superagent": "3.5.2",
+    "fwsp-config": "1.1.5",
+    "hydra-express": "1.7.0",
+    "fwsp-server-response": "2.2.6"  
   },
   "dependencies": {
     "body-parser": "^1.18.3",

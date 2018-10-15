@@ -1,0 +1,15 @@
+{
+  "environment": "development",
+  "hydra": {
+    "serviceName": "hydra-service-service",
+    "serviceIP": "",
+    "servicePort": 3000,
+    "serviceType": "hydra-service",
+    "serviceDescription": "process and download images",
+    "redis": {
+      "url": "127.0.0.1",
+      "port": 6379,
+      "db": 15
+    }
+  }
+}
