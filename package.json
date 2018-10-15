@@ -19,7 +19,7 @@
     "chai": "3.5.0",
     "eslint": "3.16.0",
     "mocha": "3.2.0",
-    "superagent": "3.5.2",
+    "superagent": "3.8.3",
     "fwsp-config": "1.1.5",
     "hydra-express": "1.7.0",
     "fwsp-server-response": "2.2.6"  
