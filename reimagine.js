@@ -1,9 +1,11 @@
-const ImageService  = require("./services/image.service");
 const express       = require("express");
-const app           = express();
 const bodyParser    = require("body-parser");
 const path          = require("path");
 const fs            = require("fs");
+
+const ImageService  = require("./services/image.service");
+
+const app           = express();
 const folderName    = "uploads";
 const port          = 3000;
 
