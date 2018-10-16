@@ -5,8 +5,17 @@
   "main": "index.js",
   "author": "VIANCH",
   "license": "MIT",
+  "scripts": {
+    "test": "nyc mocha test/*.spec.js",
+    "nyc-report": "nyc report",
+    "nyc-html-report": "nyc report --reporter=html"
+  },
   "devDependencies": {
-    "express": "^4.16.4"
+    "chai": "^4.2.0",
+    "chai-http": "^4.2.0",
+    "express": "^4.16.4",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

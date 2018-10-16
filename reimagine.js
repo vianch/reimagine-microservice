@@ -1,4 +1,4 @@
-const ImageService  = require("./image.service");
+const ImageService  = require("./services/image.service");
 const express       = require("express");
 const app           = express();
 const bodyParser    = require("body-parser");
@@ -50,3 +50,5 @@ app.head("/uploads/:image", (request, response) => {
 });
 
 app.get("/uploads/:image", ImageService.downloadImage);
+
+module.exports = app;
