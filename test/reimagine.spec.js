@@ -62,7 +62,7 @@ describe("Upload image", () => {
         });
     });
 
-    it("Should response 404 when the image does not exist", (done) => {
+    it("Should response 404 when the image does not exist (GET CALL)", (done) => {
         chai
         .request(reimagine)
         .get("/uploads/pikachu.png")
@@ -73,7 +73,75 @@ describe("Upload image", () => {
         });
     });
 
+    it("Should response 404 when the image does not exist (HEAD CALL)", (done) => {
+        chai
+        .request(reimagine)
+        .head("/uploads/pikachu.png")
+        .end((error, response) => {
+            expect(response).to.have.status(404);
+
+            return done();
+        });
+    });
+
+    it("Should response 200 when the image does not exist (HEAD CALL)", (done) => {
+        chai
+        .request(reimagine)
+        .head("/uploads/bulbasaur.png")
+        .end((error, response) => {
+            expect(response).to.have.status(200);
+
+            return done();
+        });
+    });
+
     after(done => {
         done();
     });
+
+    it("Should open thumbnail option", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/thumbnail.png")
+        .end((error, response) => {
+            expect(response).to.have.status(200);
+
+            return done();
+        });
+    });
+
+    it("Should download image", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/bulbasaur.png")
+        .end((error, response) => {
+            expect(response).to.have.status(200);
+
+            return done();
+        });
+    });
+
+    it("Should download image in greyscale", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/bulbasaur.png?greyscale=yes")
+        .end((error, response) => {
+            expect(response).to.have.status(200);
+
+            return done();
+        });
+    });
+
+    it("Should download image resized", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/bulbasaur.png?width=50")
+        .end((error, response) => {
+            expect(response).to.have.status(200);
+
+            return done();
+        });
+    });
+
+
 });
