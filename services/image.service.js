@@ -56,27 +56,29 @@ module.exports = class ImageService {
 
     static downloadImage(request, response) {
         fs.access(request.localpath, fs.constants.R_OK, (error) => {
-            if (error) { response.status(404).end(); }
-
-            let image = sharp(request.localpath);
-            let width = +request.query.width;
-            let height = +request.query.height;
-            let greyScale = ["1", "on", "yes"].includes(request.query.greyscale)
-
-            if (width || height) {
-                image.resize(width || null, height || null, { fit: "fill" });
+            if (error) { 
+                response.status(404).end(); 
+            } else {
+                let image = sharp(request.localpath);
+                let width = +request.query.width;
+                let height = +request.query.height;
+                let greyScale = ["1", "on", "yes"].includes(request.query.greyscale)
+    
+                if (width || height) {
+                    image.resize(width || null, height || null, { fit: "fill" });
+                }
+    
+                if (greyScale) {
+                    image.greyscale();
+                }
+    
+                response.setHeader(
+                    "Content-Type",
+                    `image/${ path.extname(request.image).substr(1) }`
+                );
+    
+                image.pipe(response);
             }
-
-            if (greyScale) {
-                image.greyscale();
-            }
-
-            response.setHeader(
-                "Content-Type",
-                `image/${ path.extname(request.image).substr(1) }`
-            );
-
-            image.pipe(response);
         });
     }
 }

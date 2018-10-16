@@ -35,6 +35,44 @@ describe("Upload image", () => {
             });
     });
 
+    it("Should response 403 when the extention is not png or jpg (POST)" , (done) => {
+        chai.request(reimagine)
+            .post("/uploads/bulbasaur.text")
+            .set("Content-Type", "image/txt")
+            .send(sampleImage)
+            .end((error, response) => {
+                if (!error) {
+                    expect(response).to.have.status(403);
+                } else {
+                    console.log("Error: ", error);
+                }
+
+                return done();
+            });
+    });
+
+    it("Should response 404 when the extention is not png or jpg (GET)", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/test.txt")
+        .end((error, response) => {
+            expect(response).to.have.status(404);
+
+            return done();
+        });
+    });
+
+    it("Should response 404 when the image does not exist", (done) => {
+        chai
+        .request(reimagine)
+        .get("/uploads/pikachu.png")
+        .end((error, response) => {
+            expect(response).to.have.status(404);
+
+            return done();
+        });
+    });
+
     after(done => {
         done();
     });

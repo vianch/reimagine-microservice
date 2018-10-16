@@ -44,7 +44,10 @@ app.head("/uploads/:image", (request, response) => {
         request.localpath,
         fs.constants.R_OK,
         (error) => {
-            response.status(error ? 404 : 200).end();
+            console.log('el error: ', error);
+            response.status(error ? 404 : 200);
+            response.setHeader('Content-Type', 'text/plain');
+            response.end('Cannot ' + request.method + ' ' + request.url);
         },
     );
 });
